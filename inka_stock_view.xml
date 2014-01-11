@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+	<!--albaranes de salida-->
+	<!--vista formulario heredado-->
+
+
+
+    <record model="ir.ui.view" id="view_inka_picking_form">
+        <field name="name">stock.picking.out.form</field>
+        <field name="model">stock.picking.out</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+        	 <xpath expr="/form/header/button[@string='Confirm']" position="replace">
+        	 	<button name="inka_confirm" states="draft" type="object" class="oe_highlight" string="Confirmar"/>
+             </xpath>
+             <xpath expr="/form/sheet/h1/field[@name='name']" position="replace">
+                <field name="inka_number"  class="oe_inline"  readonly="1"/>
+             </xpath>
+             <xpath expr="/form/sheet/group/group/field[@name='date']" position="after">
+             	<field name="inka_move_id" />
+             	<field name="inka_journal_id" domain="[('type','=','sale')]" widget="selection"/>
+                <field name="inka_account_id" />
+                <field name="inka_currency_id"/>
+                <field name="inka_payment_term"/>
+          	 </xpath>
+             <xpath expr="/form/sheet/notebook/page[@string='Additional Info']/group" position="after">
+                <group>
+                                    <field name="inka_tax_line" >
+                                <tree editable="bottom" string="Taxes">
+                                    <field name="name"/>
+                                    <field name="inka_picking_id"/>
+                                    <field name="account_id" groups="account.group_account_user"/>
+                                    <field name="base" on_change="base_change(base,parent.currency_id,parent.company_id,parent.date_invoice)" readonly="1"/>
+                                    <field name="amount" on_change="amount_change(amount,parent.currency_id,parent.company_id,parent.date_invoice)"/>
+                                    <field invisible="True" name="base_amount"/>
+                                    <field invisible="True" name="tax_amount"/>
+                                    <field name="factor_base" invisible="True"/>
+                                    <field name="factor_tax" invisible="True"/>
+                                </tree>
+
+                                </field>
+                </group>
+             </xpath>
+        </field>
+    </record>
+    
+    <record model="ir.ui.view" id="view_inka_move_form_inherit">
+        <field name="name">stock.move.form.inherit</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_form"/>
+        <field name="arch" type="xml">
+       		<xpath expr="/form/sheet/group/group[@name='main_grp']/field[@name='product_id']" position="after">
+        		<field name="inka_account_id" />
+        	</xpath>
+            <xpath expr="/form/sheet/group/group[@string='Traceability']" position="after">
+                <group string='Detalle Producto'>
+                    <field name="inka_price_unit"/>
+                    <field name="inka_discount" />
+                    <field name="inka_invoice_line_tax_id" widget="many2many_tags"/>
+                    <field name="inka_price_subtotal" />
+                </group>
+            </xpath>
+     	</field>
+	 </record>
+    
+</data>
+</openerp>
